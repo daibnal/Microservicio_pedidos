@@ -29,7 +29,7 @@ public class CarritoServicio {
     public List<Carrito> listarCarritos() {
         return carritoRepositorio.findAll();
     }
-    
+
     //crear carrito
     public Carrito crearCarrito(Carrito carrito) {
         carrito.setTotal(0.0);
@@ -52,6 +52,9 @@ public class CarritoServicio {
         item.setCarrito(carrito);
 
         itemCarritoRepositorio.save(item);
+
+        carrito.getItems().add(item);
+        carritoRepositorio.save(carrito);
 
         calcularTotal(idCarrito);
         return carrito;
@@ -85,16 +88,13 @@ public class CarritoServicio {
         return item.getCarrito();
     }
 
+
     //calcular total del carrito
     public void calcularTotal(Long idCarrito) {
         Carrito carrito = carritoRepositorio.findById(idCarrito).orElse(null);
         if (carrito == null) return;
 
-        double total = 0;
-
-        for (ItemCarrito item : carrito.getItems()) {
-            total += item.getSubtotal();
-        }
+        double total = carrito.getItems().stream().mapToDouble(ItemCarrito::getSubtotal).sum();
 
         carrito.setTotal(total);
         carritoRepositorio.save(carrito);
@@ -104,6 +104,9 @@ public class CarritoServicio {
     public Carrito vaciarCarrito(Long idCarrito) {
         Carrito carrito = carritoRepositorio.findById(idCarrito).orElse(null);
         if (carrito == null) return null;
+
+        // eliminar en base de dato
+        itemCarritoRepositorio.deleteAll(carrito.getItems());
 
         carrito.getItems().clear();
         carrito.setTotal(0.0);
