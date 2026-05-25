@@ -55,7 +55,6 @@ public class CarritoControlador {
     }
 
 
-
     //eliminar item al carrito
     @DeleteMapping("/item/{idItem}")
     public ResponseEntity<ResponseDTO> eliminar(@PathVariable Long idItem) {
