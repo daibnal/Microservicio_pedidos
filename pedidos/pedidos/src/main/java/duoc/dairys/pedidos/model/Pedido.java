@@ -33,7 +33,7 @@ public class Pedido {
     @Column(name = "fecha_pedido")
     private LocalDateTime fecha;
 
-     @NotBlank(message = "El estado no puede estar vacio")
+    @NotBlank(message = "El estado no puede estar vacio")
     @Column(name = "estado_pedido")
     private String estado;
 

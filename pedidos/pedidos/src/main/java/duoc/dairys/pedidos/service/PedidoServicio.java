@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import duoc.dairys.pedidos.DTO.PedidoDTO;
+import duoc.dairys.pedidos.model.DetallePedido;
 import duoc.dairys.pedidos.model.Pedido;
+import duoc.dairys.pedidos.repository.DetallePedidoRepositorio;
 import duoc.dairys.pedidos.repository.PedidoRepositorio;
 
 @Service
@@ -14,6 +16,9 @@ public class PedidoServicio {
     
     @Autowired
     private PedidoRepositorio pedidoRepositorio;
+
+    @Autowired
+    private DetallePedidoRepositorio detallePedidoRepositorio;
 
     //crear pedido
     public Pedido crearPedido(PedidoDTO dto){
@@ -56,13 +61,37 @@ public class PedidoServicio {
     return true;
     }
 
-    //calcular subtotal + iva
-    public Double calcularTotal(Double subtotal, Double iva) {
-        return subtotal + iva;
+    //calcular total
+    public Double calcularTotal(Long idPedido) {
+        List<DetallePedido> todos = detallePedidoRepositorio.findAll();
+
+        double total = 0;
+
+        for (DetallePedido d : todos) {
+            if (d.getPedido() != null &&
+                d.getPedido().getIdPedido().equals(idPedido)) {
+
+                total += d.getSubtotal();
+            }
+        }
+        return total;
+        }
+
+    //actualizar total
+    public boolean actualizarTotal(Long idPedido) {
+        Pedido pedido = pedidoRepositorio.findById(idPedido).orElse(null);
+
+        if (pedido == null) {
+            return false;
+        }
+
+        double total = calcularTotal(idPedido);
+
+        pedido.setTotal(total);
+
+        pedidoRepositorio.save(pedido);
+        return true;
     }
-
-
-
 
 
 }

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
-@RequestMapping("api/pedido")
+@RequestMapping("api/v1/pedido")
 public class PedidoController {
     
     @Autowired
@@ -58,15 +58,21 @@ public class PedidoController {
         return ResponseEntity.ok("Estado actualizado correctamente");
     }
 
-    //calcular subtotal + iva
-    @GetMapping("/total")
-    public ResponseEntity<?> calcularTotal(@RequestParam Double subtotal, @RequestParam Double iva) {
-        return ResponseEntity.ok(pedidoServicio.calcularTotal(subtotal, iva));
+    //ver total
+    @GetMapping("/total/{id}")
+    public ResponseEntity<?> total(@PathVariable Long id) {
+        return ResponseEntity.ok(pedidoServicio.calcularTotal(id));
     }
 
+    //actualizar total
+    @PutMapping("/actualizar-total/{id}")
+    public ResponseEntity<?> actualizar(@PathVariable Long id) {
+        boolean actualizar = pedidoServicio.actualizarTotal(id);
 
-
-
-
+        if (!actualizar) {
+            return ResponseEntity.status(404).body("Pedido no encontrado");
+        }
+        return ResponseEntity.ok("Total actualizado");
+    }
 
 }
