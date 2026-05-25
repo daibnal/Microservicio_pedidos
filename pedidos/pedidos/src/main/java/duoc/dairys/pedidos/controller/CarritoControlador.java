@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import duoc.dairys.pedidos.DTO.ItemCarritoDTO;
+import duoc.dairys.pedidos.DTO.ResponseDTO;
 import duoc.dairys.pedidos.model.Carrito;
 import duoc.dairys.pedidos.service.CarritoServicio;
 
@@ -47,50 +48,38 @@ public class CarritoControlador {
 
     //agregar item al carrito
     @PostMapping("/{idCarrito}/item")
-    public ResponseEntity<?> agregarItem(@PathVariable Long idCarrito, @RequestBody ItemCarritoDTO dto) {
+    public ResponseEntity<ResponseDTO> agregarItem(@PathVariable Long idCarrito, @RequestBody ItemCarritoDTO dto) {
         Carrito carrito = carritoServicio.agregarItem(idCarrito, dto);
-        Map<String, Object> response = new HashMap<>();
-        response.put("mensaje", "Item agregado correctamente");
-        response.put("data", carrito);
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(new ResponseDTO("Item agregado correctamente", carrito));
     }
 
 
 
     //eliminar item al carrito
     @DeleteMapping("/item/{idItem}")
-    public ResponseEntity<?> eliminar(@PathVariable Long idItem) {
+    public ResponseEntity<ResponseDTO> eliminar(@PathVariable Long idItem) {
         Carrito carrito = carritoServicio.eliminarItem(idItem);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("mensaje", "Item eliminado correctamente");
-        response.put("data", carrito);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new ResponseDTO("Item eliminado correctamente", carrito));
     }
+
 
     //actualizar el carrito
     @PutMapping("/item/{idItem}")
-public ResponseEntity<?> actualizar(@PathVariable Long idItem, @RequestParam int cantidad) {
-    Carrito carrito = carritoServicio.actualizarCantidad(idItem, cantidad);
-    Map<String, Object> response = new HashMap<>();
-    response.put("mensaje", "Cantidad actualizada correctamente");
-    response.put("data", carrito);
+    public ResponseEntity<ResponseDTO> actualizar(@PathVariable Long idItem, @RequestParam int cantidad) {
+        Carrito carrito = carritoServicio.actualizarCantidad(idItem, cantidad);
 
-    return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new ResponseDTO("Cantidad actualizada correctamente", carrito));
     }
-
+    
 
     //vaciar carrito
     @PutMapping("/vaciar/{idCarrito}")
-    public ResponseEntity<?> vaciar(@PathVariable Long idCarrito) {
+    public ResponseEntity<ResponseDTO> vaciar(@PathVariable Long idCarrito) {
         Carrito carrito = carritoServicio.vaciarCarrito(idCarrito);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("mensaje", "Carrito vaciado correctamente");
-        response.put("data", carrito);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new ResponseDTO("Carrito vaciado correctamente", carrito));
     }
 
 }

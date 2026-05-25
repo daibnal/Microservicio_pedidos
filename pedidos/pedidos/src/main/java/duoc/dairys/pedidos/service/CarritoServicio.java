@@ -78,6 +78,8 @@ public class CarritoServicio {
         ItemCarrito item = itemCarritoRepositorio.findById(idItem).orElse(null);
         if (item == null) return null;
 
+        if (cantidad <= 0) return null;
+        
         item.setCantidad(cantidad);
         item.calcularSubtotal();
 
@@ -99,6 +101,7 @@ public class CarritoServicio {
         carrito.setTotal(total);
         carritoRepositorio.save(carrito);
     }
+
 
     //vaciar carrito
     public Carrito vaciarCarrito(Long idCarrito) {
