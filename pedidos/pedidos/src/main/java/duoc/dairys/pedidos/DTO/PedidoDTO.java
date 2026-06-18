@@ -1,8 +1,7 @@
 package duoc.dairys.pedidos.DTO;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,13 +13,9 @@ import lombok.NoArgsConstructor;
 public class PedidoDTO {
     @NotNull
     private Long idCliente;
+    private String direccion;
 
-    @NotNull
-    private LocalDateTime fecha;
+    private List<DetallPedidoDTO> detalles;
 
-    @NotBlank
-    private String estado;
 
-    @NotNull
-    private Double total;
 }

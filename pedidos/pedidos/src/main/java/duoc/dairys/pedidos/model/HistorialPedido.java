@@ -1,5 +1,6 @@
 package duoc.dairys.pedidos.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -30,5 +31,5 @@ public class HistorialPedido {
     private Long idCliente;
 
     @OneToMany
-    private List<Pedido> pedidos;
+    private List<Pedido> pedidos = new ArrayList<>();
 }
