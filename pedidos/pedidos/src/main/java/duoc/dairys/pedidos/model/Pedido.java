@@ -1,12 +1,16 @@
 package duoc.dairys.pedidos.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -20,6 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "pedidos")
+
 public class Pedido {
 
     @Id
@@ -31,14 +36,25 @@ public class Pedido {
 
     @NotNull(message = "La fecha es obligatoria")
     @Column(name = "fecha_pedido")
-    private LocalDateTime fecha;
+    private LocalDateTime fechaPedido;
 
     @NotBlank(message = "El estado no puede estar vacio")
     @Column(name = "estado_pedido")
-    private String estado;
+    private String estadoPedido;
+
+    @NotBlank(message = "la direccion no puede estar vacia")
+    @Column(name = "direccion")
+    private String direccion;
 
     @Min(0)
     @NotNull(message = "El monto es obligatorio")
     @Column(name = "monto_total")
     private Double total;
+
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+    private List<DetallePedido> detalles = new ArrayList<>();
+    
+    public void calcularTotal() {
+        this.total = detalles.stream().mapToDouble(DetallePedido::getSubtotal).sum();
+    }
 }

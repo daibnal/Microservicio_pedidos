@@ -15,26 +15,18 @@ public class DetallePedidoServicio {
     private DetallePedidoRepositorio detallePedidoRepositorio;
 
 
-    //crear detalle y calcular total
-    public DetallePedido crearDetalle(DetallePedido detalle) {
-        if (detalle.getCantidad() == null || detalle.getCantidad() <= 0) {
-            throw new IllegalArgumentException("Cantidad inválida");
-        }
-
-        if (detalle.getPrecioUnitario() == null || detalle.getPrecioUnitario() <= 0) {
-            throw new IllegalArgumentException("Precio inválido");
-        }
-
-        if (detalle.getPedido() == null || detalle.getPedido().getIdPedido() == null) {
-            throw new IllegalArgumentException("Pedido inválido");
-        }
-
-        detalle.calcularSubtotal();
-        return detallePedidoRepositorio.save(detalle);
+    //obtener detalle
+    public DetallePedido obtener(Long id) {
+        return detallePedidoRepositorio.findById(id).orElse(null);
     }
 
-    //listar detalle del pedido
-    public List<DetallePedido> obtenerDetalles() {
+    //listar detalles
+    public List<DetallePedido> listar() {
         return detallePedidoRepositorio.findAll();
+    }
+
+    //eliminar detalle
+    public void eliminar(Long id) {
+        detallePedidoRepositorio.deleteById(id);
     }
 }

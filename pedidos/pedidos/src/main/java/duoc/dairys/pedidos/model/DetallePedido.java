@@ -38,7 +38,7 @@ public class DetallePedido {
     @NotNull(message = "La cantidad es obligatoria")
     @Min(value = 1, message = "La cantidad debe ser mayor a 0")
     @Column(name = "cantidad", nullable = false)
-    private Long cantidad;
+    private Integer cantidad;
 
 
     @NotNull(message = "El precio unitario es obligatorio")

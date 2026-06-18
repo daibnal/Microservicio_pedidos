@@ -20,22 +20,23 @@ public class HistorialControlador {
     @Autowired
     private HistorialServicio historialServicio;
 
-    //crear historial pedidos
-    @PostMapping
+
+    //crear historial
+    @PostMapping("/crear")
     public ResponseEntity<?> crear(@RequestBody HistorialPedido historial) {
-        return ResponseEntity.status(201).body(historialServicio.crearHistorial(historial));
+        return ResponseEntity.status(201).body(new ResponseDTO("Historial creado correctamente",historialServicio.crear(historial)));
     }
 
-    //agregar pedido al historial
-    @PostMapping("/{idHistorial}/pedido/{idPedido}")
-    public ResponseEntity<?> agregarPedido(@PathVariable Long idHistorial, @PathVariable Long idPedido) {
-        return ResponseEntity.ok(new ResponseDTO("Pedido agregado al historial", historialServicio.agregarPedido(idHistorial, idPedido)));
+    //listar historiales
+    @GetMapping
+    public ResponseEntity<?> listar() {
+        return ResponseEntity.ok(new ResponseDTO("Lista de historiales obtenida correctamente",historialServicio.listar()));
     }
 
-    //obtener pedidos
-    @GetMapping("/{idHistorial}/pedidos")
-    public ResponseEntity<?> obtenerPedidos(@PathVariable Long idHistorial) {
-        return ResponseEntity.ok(new ResponseDTO("Pedidos obtenidos correctamente",historialServicio.obtenerPedidos(idHistorial)));
+    //obtener historial por id
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtener(@PathVariable Long id) {
+        return ResponseEntity.ok(new ResponseDTO("Historial encontrado", historialServicio.obtener(id)));
     }
 
 

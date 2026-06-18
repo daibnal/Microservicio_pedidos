@@ -3,6 +3,8 @@ package duoc.dairys.pedidos.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import duoc.dairys.pedidos.DTO.PedidoDTO;
+import duoc.dairys.pedidos.DTO.ResponseDTO;
+import duoc.dairys.pedidos.model.Pedido;
 import duoc.dairys.pedidos.service.PedidoServicio;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +28,30 @@ public class PedidoController {
 
     //crear pedido
     @PostMapping("/crear")
-    public ResponseEntity<?> crearPedido(@RequestBody PedidoDTO dto) {
-        return ResponseEntity.status(201).body(pedidoServicio.crearPedido(dto));
+    public ResponseEntity<?> crear(@RequestBody PedidoDTO dto) {
+        Pedido pedido = pedidoServicio.crearPedido(dto);
+        return ResponseEntity.status(201).body(new ResponseDTO("Pedido creado correctamente", pedido));
     }
 
-    //obtener pedidos
+    
+    //obtener pedido por id
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtener(@PathVariable Long id) {
+        return ResponseEntity.ok(new ResponseDTO("Pedido encontrado", pedidoServicio.obtenerPedido(id)));
+    }  
+
+
+    //listar pedidos
     @GetMapping
-    public ResponseEntity<?> obtenerPedidos() {
-        return ResponseEntity.ok(pedidoServicio.obtenerPedidos());
+    public ResponseEntity<?> listar() {
+        return ResponseEntity.ok(new ResponseDTO("Listado de pedidos", pedidoServicio.listarPedidos()));
+    }
+
+    //estado del pedido
+     @PutMapping("/estado/{id}")
+    public ResponseEntity<?> cambiarEstado(@PathVariable Long idPedido, @RequestParam String estado) {
+
+        return ResponseEntity.ok(new ResponseDTO( "Estado actualizado", pedidoServicio.cambiarEstado(idPedido, estado)));
     }
 
     //cancelar pedido
@@ -45,34 +63,6 @@ public class PedidoController {
             return ResponseEntity.status(404).body("Pedido no encontrado");
         }
         return ResponseEntity.ok("Pedido cancelado correctamente");
-    }
-
-    //cambiar estado del pedido
-    @PutMapping("/estado/{id}")
-    public ResponseEntity<?> cambiarEstado(@PathVariable Long id, @RequestParam String estado) {
-        boolean actualizado = pedidoServicio.cambiarEstado(id, estado);
-
-        if (!actualizado) {
-            return ResponseEntity.status(404).body("Pedido no encontrado");
-        }
-        return ResponseEntity.ok("Estado actualizado correctamente");
-    }
-
-    //ver total
-    @GetMapping("/total/{id}")
-    public ResponseEntity<?> total(@PathVariable Long id) {
-        return ResponseEntity.ok(pedidoServicio.calcularTotal(id));
-    }
-
-    //actualizar total
-    @PutMapping("/actualizar-total/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id) {
-        boolean actualizar = pedidoServicio.actualizarTotal(id);
-
-        if (!actualizar) {
-            return ResponseEntity.status(404).body("Pedido no encontrado");
-        }
-        return ResponseEntity.ok("Total actualizado");
     }
 
 }

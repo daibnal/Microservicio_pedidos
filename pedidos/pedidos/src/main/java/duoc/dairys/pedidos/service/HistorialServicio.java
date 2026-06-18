@@ -17,32 +17,32 @@ public class HistorialServicio {
     private HistorialRepositorio historialRepositorio;
 
     @Autowired
-    private PedidoRepositorio pedidoRepo;
+    private PedidoRepositorio pedidoRepositorio;
 
     //crear historial
-    public HistorialPedido crearHistorial(HistorialPedido historial) {
+    public HistorialPedido crear(HistorialPedido historial) {
         return historialRepositorio.save(historial);
     }
 
-    //agregar pedido al historial
-    public HistorialPedido agregarPedido(Long idHistorial, Long idPedido) {
+    // obtener historial por id
+    public HistorialPedido obtener(Long id) {
+        return historialRepositorio.findById(id).orElse(null);
+    }
+    // listar historiales
+    public List<HistorialPedido> listar() {
+        return historialRepositorio.findAll();
+    }
 
+    // agregar pedido al historial
+    public HistorialPedido agregarPedido(Long idHistorial, Pedido pedido) {
         HistorialPedido historial = historialRepositorio.findById(idHistorial).orElse(null);
         if (historial == null) return null;
-
-        Pedido pedido = pedidoRepo.findById(idPedido).orElse(null);
-        if (pedido == null) return null;
 
         historial.getPedidos().add(pedido);
         return historialRepositorio.save(historial);
     }
 
-    //obtener pedidos del historial
-    public List<Pedido> obtenerPedidos(Long idHistorial) {
-        HistorialPedido historial = historialRepositorio.findById(idHistorial).orElse(null);
-        if (historial == null) return null;
 
-        return historial.getPedidos();
-    }
+
     
 }
