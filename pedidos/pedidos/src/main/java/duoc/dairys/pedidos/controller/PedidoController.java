@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
-@RequestMapping("api/ecomarket/v1/pedido")
+@RequestMapping("/api/ecomarket/v1/pedido")
 public class PedidoController {
     
     @Autowired

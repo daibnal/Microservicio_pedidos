@@ -12,7 +12,7 @@ public class VerCliente {
     private RestTemplate restTemplate;
 
     public boolean existeCliente(Long idCliente) {
-        String url = "http://localhost:8084/api/clientes/" + idCliente;
+        String url = "http://localhost:8084/api/v1/usuarios//signin/" + idCliente;
 
         try {ClienteDTO cliente = restTemplate.getForObject(url, ClienteDTO.class);
             return cliente != null && "ACTIVO".equalsIgnoreCase(cliente.getEstado());
