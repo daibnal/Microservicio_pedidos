@@ -1,6 +1,5 @@
 package duoc.dairys.pedidos.client;
 
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,15 +13,20 @@ public class ValidarStock {
     @Autowired
     private RestTemplate restTemplate;
 
-    public boolean verificarStock (Long idInventario, Long idProducto){
-        Optional<ProdInvDTO> producto = Optional.of(restTemplate.getForObject("http://localhost:8081/api/ecomarket/v1/productos/inventario" + idInventario + "/producto/" + idProducto + "/stock", ProdInvDTO.class));
-        ProdInvDTO product = producto.get();
-        int i = product.getStockActual();
+    public boolean verificarStock(Long idInventario, Long idProducto) {
 
-        if(idProducto == 0){
+        if (idInventario == null || idProducto == null || idProducto == 0) {
             return false;
         }
-        return true;
+
+        String url = "http://localhost:8081/api/ecomarket/v1/productos/inventario/" + idInventario + "/producto/" + idProducto + "/stock";
+
+        ProdInvDTO producto = restTemplate.getForObject(url, ProdInvDTO.class);
+
+        if (producto == null) {
+            return false;
+        }
+        return producto.getStockActual() > 0;
     }
     
 }

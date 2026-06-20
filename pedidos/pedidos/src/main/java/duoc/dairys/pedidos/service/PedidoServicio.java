@@ -6,53 +6,73 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import duoc.dairys.pedidos.DTO.DetallPedidoDTO;
 import duoc.dairys.pedidos.DTO.PedidoDTO;
+import duoc.dairys.pedidos.DTO.VentaDTO;
+import duoc.dairys.pedidos.client.VerCliente;
 import duoc.dairys.pedidos.model.DetallePedido;
 import duoc.dairys.pedidos.model.Pedido;
-import duoc.dairys.pedidos.repository.HistorialRepositorio;
 import duoc.dairys.pedidos.repository.PedidoRepositorio;
 
 @Service
 public class PedidoServicio {
     
-     @Autowired
+    @Autowired
     private PedidoRepositorio pedidoRepositorio;
 
     @Autowired
-    private HistorialRepositorio historialRepositorio;
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private VerCliente cliente;
+
+
 
     //crear pedido
     public Pedido crearPedido(PedidoDTO dto) {
 
-        Pedido pedido = new Pedido();
+    //validar que el cliente exista
+    if (!cliente.existeCliente(dto.getIdCliente())) {
+        throw new RuntimeException("El cliente no existe o está inactivo");
+    }
 
-        pedido.setIdCliente(dto.getIdCliente());
-        pedido.setDireccion(dto.getDireccion());
-        pedido.setEstadoPedido("PENDIENTE");
-        pedido.setFechaPedido(LocalDateTime.now());
+    Pedido pedido = new Pedido();
 
-        List<DetallePedido> detalles = new ArrayList<>();
+    pedido.setIdCliente(dto.getIdCliente());
+    pedido.setDireccion(dto.getDireccion());
+    pedido.setEstadoPedido("PENDIENTE");
+    pedido.setFechaPedido(LocalDateTime.now());
 
-        for (DetallPedidoDTO d : dto.getDetalles()) {
+    List<DetallePedido> detalles = new ArrayList<>();
 
-            DetallePedido detalle = new DetallePedido();
+    for (DetallPedidoDTO d : dto.getDetalles()) {
 
-            detalle.setIdProducto(d.getIdProducto());
-            detalle.setNombreProducto(d.getNombreProducto());
-            detalle.setCantidad(d.getCantidad());
-            detalle.setPrecioUnitario(d.getPrecioUnitario());
+        DetallePedido detalle = new DetallePedido();
 
-            detalle.calcularSubtotal();
-            detalle.setPedido(pedido);
+        detalle.setIdProducto(d.getIdProducto());
+        detalle.setNombreProducto(d.getNombreProducto());
+        detalle.setCantidad(d.getCantidad());
+        detalle.setPrecioUnitario(d.getPrecioUnitario());
 
-            detalles.add(detalle);
-        }
-        pedido.setDetalles(detalles);
-        pedido.calcularTotal();
+        detalle.calcularSubtotal();
+        detalle.setPedido(pedido);
 
-        return pedidoRepositorio.save(pedido);
+        detalles.add(detalle);
+    }
+
+    pedido.setDetalles(detalles);
+    pedido.calcularTotal();
+
+    Pedido pedidoGuardado = pedidoRepositorio.save(pedido);
+
+    //conexion con microservicio ventas
+    VentaDTO ventaDTO = new VentaDTO(pedidoGuardado.getIdPedido());
+
+    restTemplate.postForObject("http://localhost:8086/api/ventas", ventaDTO, Object.class);
+
+    return pedidoGuardado;    
     }
 
 
@@ -68,7 +88,6 @@ public class PedidoServicio {
 
     //cambiar el estado del pedido
     public Pedido cambiarEstado(Long id, String estado) {
-
         Pedido pedido = pedidoRepositorio.findById(id).orElse(null);
 
         if (pedido == null) {
