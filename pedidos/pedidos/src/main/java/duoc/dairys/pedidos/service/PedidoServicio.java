@@ -70,7 +70,7 @@ public class PedidoServicio {
     //conexion con microservicio ventas
     VentaDTO ventaDTO = new VentaDTO(pedidoGuardado.getIdPedido());
 
-    restTemplate.postForObject("http://localhost:8086/api/ventas", ventaDTO, Object.class);
+    restTemplate.postForObject("http://localhost:8084/api/ventas", ventaDTO, Object.class);
 
     return pedidoGuardado;    
     }

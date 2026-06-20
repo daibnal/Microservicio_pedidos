@@ -1,4 +1,4 @@
-package duoc.dairys.config;
+package duoc.dairys.pedidos.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
