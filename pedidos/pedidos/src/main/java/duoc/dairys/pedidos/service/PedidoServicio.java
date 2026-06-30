@@ -1,5 +1,6 @@
 package duoc.dairys.pedidos.service;
 
+import duoc.dairys.pedidos.client.ConVenta;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,8 @@ import duoc.dairys.pedidos.repository.PedidoRepositorio;
 @Service
 public class PedidoServicio {
     
+    private final ConVenta conVenta;
+
     @Autowired
     private PedidoRepositorio pedidoRepositorio;
 
@@ -27,6 +30,15 @@ public class PedidoServicio {
 
     @Autowired
     private VerCliente cliente;
+
+    @Autowired
+    private ConVenta venta;
+
+
+
+    PedidoServicio(ConVenta conVenta) {
+        this.conVenta = conVenta;
+    }
 
 
 
@@ -70,7 +82,7 @@ public class PedidoServicio {
     //conexion con microservicio ventas
     VentaDTO ventaDTO = new VentaDTO(pedidoGuardado.getIdPedido());
 
-    restTemplate.postForObject("http://localhost:8084/api/ventas", ventaDTO, Object.class);
+    conVenta.registrarVenta(ventaDTO);
 
     return pedidoGuardado;    
     }
