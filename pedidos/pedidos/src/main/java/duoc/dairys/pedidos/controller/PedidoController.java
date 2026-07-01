@@ -6,6 +6,7 @@ import duoc.dairys.pedidos.DTO.PedidoDTO;
 import duoc.dairys.pedidos.DTO.ResponseDTO;
 import duoc.dairys.pedidos.model.Pedido;
 import duoc.dairys.pedidos.service.PedidoServicio;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class PedidoController {
 
     //crear pedido
     @PostMapping("/crear")
-    public ResponseEntity<?> crear(@RequestBody PedidoDTO dto) {
+    public ResponseEntity<?> crear(@Valid @RequestBody PedidoDTO dto) {
         Pedido pedido = pedidoServicio.crearPedido(dto);
         return ResponseEntity.status(201).body(new ResponseDTO("Pedido creado correctamente", pedido));
     }
@@ -48,21 +49,11 @@ public class PedidoController {
     }
 
     //estado del pedido
-     @PutMapping("/estado/{id}")
-    public ResponseEntity<?> cambiarEstado(@PathVariable Long idPedido, @RequestParam String estado) {
-
-        return ResponseEntity.ok(new ResponseDTO( "Estado actualizado", pedidoServicio.cambiarEstado(idPedido, estado)));
+    @PutMapping("/estado/{id}")
+    public ResponseEntity<?> cambiarEstado(@PathVariable Long id, @RequestParam String estado) {
+        return ResponseEntity.ok(new ResponseDTO( "Estado actualizado", pedidoServicio.cambiarEstado(id, estado)));
     }
 
-    //cancelar pedido
-    @PutMapping("/cancelar/{id}")
-    public ResponseEntity<?> cancelarPedido(@PathVariable Long id) {
-        boolean cancelado = pedidoServicio.cancelarPedido(id);
-
-        if (!cancelado) {
-            return ResponseEntity.status(404).body("Pedido no encontrado");
-        }
-        return ResponseEntity.ok("Pedido cancelado correctamente");
-    }
+    
 
 }

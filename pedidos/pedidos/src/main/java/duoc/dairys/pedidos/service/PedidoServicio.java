@@ -19,8 +19,6 @@ import duoc.dairys.pedidos.repository.PedidoRepositorio;
 
 @Service
 public class PedidoServicio {
-    
-    private final ConVenta conVenta;
 
     @Autowired
     private PedidoRepositorio pedidoRepositorio;
@@ -33,13 +31,6 @@ public class PedidoServicio {
 
     @Autowired
     private ConVenta venta;
-
-
-
-    PedidoServicio(ConVenta conVenta) {
-        this.conVenta = conVenta;
-    }
-
 
 
     //crear pedido
@@ -82,7 +73,7 @@ public class PedidoServicio {
     //conexion con microservicio ventas
     VentaDTO ventaDTO = new VentaDTO(pedidoGuardado.getIdPedido());
 
-    conVenta.registrarVenta(ventaDTO);
+    venta.registrarVenta(ventaDTO);
 
     return pedidoGuardado;    
     }
@@ -110,16 +101,5 @@ public class PedidoServicio {
         return pedidoRepositorio.save(pedido);
     }
 
-    //cancelar pedido
-    public boolean cancelarPedido(Long id) {
-    Pedido pedido = pedidoRepositorio.findById(id).orElse(null);
-
-    if (pedido == null) {
-        return false;
-    }   
-    pedido.setEstadoPedido("CANCELADO");
-    pedidoRepositorio.save(pedido);
-    return true;
-    }
 
 }
